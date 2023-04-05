@@ -1,24 +1,72 @@
-import logo from './logo.svg';
-import './App.css';
+import { React, useEffect, useState } from "react";
+import "./App.css";
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 function App() {
+  const [data, setData] = useState([]);
+
+  const [age, setAge] = React.useState('');
+
+  const handleChange = (event) => {
+    setAge(event.target.value);
+  };
+
+  const fetchData = () => {
+    fetch(`https://dummyjson.com/products`)
+      .then((response) => response.json())
+      .then((actualData) => {
+        console.log(actualData);
+        setData(actualData.products);
+        console.log(data);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <>
+    <h1>Project estimation</h1>
+    <Box sx={{ minWidth: 120 }}>
+      <FormControl fullWidth>
+        <InputLabel id="demo-simple-select-label">Age</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={age}
+          label="Age"
+          onChange={handleChange}
         >
-          Learn React
-        </a>
-      </header>
+          <MenuItem value={10}>Ten</MenuItem>
+          <MenuItem value={20}>Twenty</MenuItem>
+          <MenuItem value={30}>Thirty</MenuItem>
+        </Select>
+      </FormControl>
+    </Box>
+    <div className="App">
+      <tbody>
+        <tr>
+          <th>Features</th>
+          <th>Man/Day</th>
+        </tr>
+        {data.map((item, index) => (
+          <tr key={index}>
+            <td>{item.title}</td>
+            <td>{item.price}</td>
+          </tr>
+        ))}
+      </tbody>
     </div>
+    </>
+    
   );
 }
 
